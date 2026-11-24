@@ -29,3 +29,5 @@ GitHub REST requests fetch public account, repository and event data. GraphQL pr
 | GET /api/report?start=YYYY-MM-DD&end=YYYY-MM-DD | Authenticated aggregates and accepted contact receipts |
 
 Private runtime metrics include a rolling sample of request processing time and process age. Public status draws release metadata from the hosting environment. Neither source measures historical uptime.
+
+The hero also offers a click-to-load WebGL island with a moving network packet, soft lighting and orbit controls. It returns to the illustration when it leaves the viewport. The hero and interactive desk share renderer dependencies.

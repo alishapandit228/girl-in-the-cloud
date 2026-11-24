@@ -98,3 +98,23 @@ class PortfolioTests(unittest.TestCase):
         self.assertNotIn("github.com/alishapandit228/LabQuest",html)
         self.assertNotIn("/admin",self.client.get("/sitemap.xml").text)
         self.assertIn("noindex",self.client.get("/admin").text)
+    def test_github_public_api_contract(self):
+        original=httpx.AsyncClient
+        queried=[]
+        def upstream(req):
+            queried.append(req.url.path)
+            if req.url.path=="/graphql":
+                self.assertEqual(req.headers.get("authorization"),"Bearer test-only")
+                return httpx.Response(200,json={"data":{"user":{"contributionsCollection":{"contributionCalendar":{"totalContributions":2,"weeks":[]}}}}})
+            self.assertNotIn("authorization",req.headers)
+            if req.url.path.endswith("/repos"):data=[{"name":"Public Project","language":"Python","stargazers_count":2,"updated_at":"2026-11-01"}]
+            elif req.url.path.endswith("/public"):data=[{"type":"PushEvent","repo":{"name":"owner/public"}}]
+            else:data={"public_repos":1,"followers":3}
+            return httpx.Response(200,json=data)
+        def client(**kwargs):return original(transport=httpx.MockTransport(upstream),**kwargs)
+        with patch.dict(os.environ,{"GITHUB_TOKEN":"test-only"}),patch.object(httpx,"AsyncClient",side_effect=client):
+            result=asyncio.run(svc.GitHub().load("owner"))
+        self.assertEqual(result["stats"]["Repository stars"],2)
+        self.assertEqual(result["calendar"]["totalContributions"],2)
+        self.assertEqual(result["languages"],["Python"])
+        self.assertEqual(len(queried),4)

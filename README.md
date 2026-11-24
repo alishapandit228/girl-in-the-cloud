@@ -1,6 +1,7 @@
 # Girl in the Cloud
 
-**Alisha Pandit · Aspiring Cloud Engineer**  
+**Alisha Pandit · Aspiring Cloud Engineer**
+
 Soft aesthetics. Strong architecture.
 
 A personal portfolio built around an illustrated cloud atlas. Four project islands open individual engineering case studies. A miniature desk, architecture layers and achievement diary introduce Alisha’s work and learning goals.
