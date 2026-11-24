@@ -6,7 +6,9 @@ Soft aesthetics. Strong architecture.
 
 A personal portfolio built around an illustrated cloud atlas. Four project islands open individual engineering case studies. A miniature desk, architecture layers and achievement diary introduce Alisha’s work and learning goals.
 
-![Isometric cloud workspace](frontend/public/art/hero.svg)
+![Desktop portfolio homepage](docs/screenshots/desktop.webp)
+
+[Mobile preview](docs/screenshots/mobile.webp) · [Night theme](docs/screenshots/night.webp)
 
 ## Run locally
 
@@ -25,7 +27,7 @@ With Node 22, build the React workspace and local web fonts:
 
 ```sh
 cd frontend
-npm install
+npm ci
 npm test
 npm run build
 cd ..

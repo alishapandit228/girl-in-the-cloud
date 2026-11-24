@@ -23,9 +23,13 @@ jobs:
         run: python -m scripts.check_github
         env: {GITHUB_TOKEN: '${{ github.token }}'}
       - working-directory: frontend
-        run: npm install --no-fund && npm test && npm run build
+        run: npm ci --no-fund && npm test && npm run build
       - run: |
           cp .env.example .env
+          export OWNER_TEST_PASSWORD="$(openssl rand -hex 24)"
+          echo "::add-mask::$OWNER_TEST_PASSWORD"
+          echo "OWNER_TEST_PASSWORD=$OWNER_TEST_PASSWORD" >> "$GITHUB_ENV"
+          python -c 'import os; from backend.passwords import password_hash; print("ADMIN_HASH="+password_hash(os.environ["OWNER_TEST_PASSWORD"]))' >> .env
           echo "POSTGRES_PASSWORD=$(openssl rand -hex 24)" >> .env
           cat >> .env <<'MAIL'
           SMTP_HOST=mailpit

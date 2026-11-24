@@ -1,10 +1,144 @@
-{% extends 'base.html' %}{% block body %}<div class="reading"><a class="back" href="{{ '/#projects' if project else '/' }}">← {{ 'Project atlas' if project else 'Portfolio' }}</a><div class="eyebrow">{{ kicker }}</div><h1>{{ title }}</h1>
-{% if project %}<p class="tagline">{{ project.summary }}</p><img src="/art/{{ project.art }}.svg" alt="Illustrated {{ project.name }} island"><small>{{ project.status }}</small><section><h2>Problem and approach</h2><p>{{ project.problem }}</p><p>{{ project.solution }}</p></section><section><h2>Implementation</h2><p>{{ project.implementation }}</p><ul>{% for f in project.features %}<li>{{ f }}</li>{% endfor %}</ul><div class="tags">{% for t in project.stack %}<b>{{ t }}</b>{% endfor %}</div></section><section><h2>Architecture</h2><small>{{ 'DOCUMENTED DATA FLOW' if project.source else 'CONCEPTUAL DATA FLOW' }}</small><ol class="flow">{% for n in project.flow %}<li>{{ n }}</li>{% endfor %}</ol></section>{% for s in project.screenshots %}<img src="{{ s.src }}" alt="{{ s.alt }}">{% endfor %}<section><h2>Engineering challenge</h2><p>{{ project.challenge }}</p><h2>Next steps</h2><p>{{ project.future }}</p><h2>Deployment</h2><p>{{ project.deployment or 'No public deployment has been verified.' }}</p><div class="choices">{% for key,label in [('source','Source code'),('demo','Live demo'),('docs','Documentation')] %}{% if project[key] %}<a href="{{ project[key] }}">{{ label }} ↗</a>{% endif %}{% endfor %}</div></section>
-{% elif mode=='blog' %}<form id="blog-filter"><label>Search articles<input name="q" type="search" placeholder="Title, tag or keyword"></label><label>Category<select name="category" class="filter"><option value="">All categories</option>{% for c in categories %}<option>{{ c }}</option>{% endfor %}</select></label></form><p id="results" role="status">{{ articles|length }} published articles</p>{% for a in articles %}<article class="detailbox" data-category="{{ a.category }}" data-article="{{ (a.title ~ ' ' ~ a.tags|join(' ') ~ ' ' ~ a.summary)|lower }}"><small>{{ a.date }} · {{ a.minutes }} min</small><h3><a href="/blog/{{ a.slug }}">{{ a.title }}</a></h3><p>{{ a.summary }}</p></article>{% endfor %}
-{% elif article %}<p>{{ article.date }} · {{ article.category }} · {{ article.minutes }} min read</p><div class="tags">{% for t in article.tags %}<b>{{ t }}</b>{% endfor %}</div><nav aria-label="Table of contents"><h2>Contents</h2>{% for id,t in article.toc %}<div><a href="#{{ id }}">{{ t }}</a></div>{% endfor %}</nav><article>{{ article.html|safe }}</article><a href="mailto:?subject={{ title|urlencode }}&body={{ canonical|urlencode }}">Share by email</a>{% if related %}<h2>Related articles</h2>{% for a in related %}<a href="/blog/{{ a.slug }}">{{ a.title }}</a>{% endfor %}{% endif %}
-{% elif cert %}<p>{{ cert.issuer }} · Issued {{ cert.date }}</p>{% if cert.file %}{% if cert.file.lower().endswith('.pdf') %}<iframe title="{{ cert.name }} certificate" src="{{ cert.file }}"></iframe>{% else %}<img src="{{ cert.file }}" alt="{{ cert.name }} certificate">{% endif %}<a href="{{ cert.file }}" download>Download certificate</a>{% else %}<p>Certificate preview pending.</p>{% endif %}{% if cert.verify %}<a href="{{ cert.verify }}">Verify with issuer ↗</a>{% endif %}
-{% elif mode=='resume' %}{% if p.resume %}<iframe title="Professional résumé" src="{{ p.resume }}"></iframe><div class="choices"><a href="{{ p.resume }}">Open PDF</a><a href="/resume/download" download>Download PDF</a></div>{% else %}<p>The professional résumé PDF is pending publication.</p><a href="/#about">Read my background →</a>{% endif %}
-{% elif mode=='login' %}<form id="login"><label>Owner password<input type="password" name="password" required maxlength="512" autocomplete="current-password"></label><button class="btn primary">Sign in</button><p role="status"></p></form><script defer src="/assets/admin.js"></script>
-{% elif mode=='dashboard' %}<button class="btn" id="logout">Sign out</button><form id="range"><label>From<input type="date" name="start" value="{{ start }}" required></label><label>Through<input type="date" name="end" value="{{ end }}" required></label><button class="btn">Apply dates</button></form><div id="report" aria-live="polite"></div><script defer src="/assets/admin.js"></script>
-{% elif mode=='status' %}<p>Application responding · {{ version }}</p><p>Build: {{ build or 'unreported' }}. Last successful deployment: {{ deployed or 'unreported' }}.</p><a href="{{ p.github }}/girl-in-the-cloud/actions">View CI runs ↗</a>
-{% else %}<p>This page could not be found.</p>{% endif %}</div>{% endblock %}
+{% extends 'base.html' %}
+{% block body %}
+<div class="reading"><a class="back" href="{{ '/#projects' if project else '/' }}">← {{ 'Project atlas' if project else 'Portfolio' }}</a>
+<div class="eyebrow">{{ kicker }}</div>
+<h1>{{ title }}</h1>
+{% if project %}
+<p class="tagline">{{ project.summary }}</p><img src="/art/{{ project.art }}.svg" alt="Illustrated {{ project.name }} island"><small>{{ project.status }}</small>
+<section>
+<h2>Problem and approach</h2>
+<p>{{ project.problem }}</p>
+<p>{{ project.solution }}</p>
+</section>
+<section>
+<h2>Implementation</h2>
+<p>{{ project.implementation }}</p>
+<ul>
+{% for f in project.features %}
+<li>{{ f }}</li>
+{% endfor %}
+</ul>
+<div class="tags">
+{% for t in project.stack %}
+<b>{{ t }}</b>
+{% endfor %}
+</div>
+</section>
+<section>
+<h2>Architecture</h2><small>{{ 'DOCUMENTED DATA FLOW' if project.source else 'CONCEPTUAL DATA FLOW' }}</small>
+<ol class="flow">
+{% for n in project.flow %}
+<li>{{ n }}</li>
+{% endfor %}
+</ol>
+</section>
+{% for s in project.screenshots %}
+<img src="{{ s.src }}" alt="{{ s.alt }}">
+{% endfor %}
+<section>
+<h2>Engineering challenge</h2>
+<p>{{ project.challenge }}</p>
+<h2>Next steps</h2>
+<p>{{ project.future }}</p>
+<h2>Deployment</h2>
+<p>{{ project.deployment or 'No public deployment has been verified.' }}</p>
+<div class="choices">
+{% for key,label in [('source','Source code'),('demo','Live demo'),('docs','Documentation')] %}
+{% if project[key] %}
+<a href="{{ project[key] }}">{{ label }} ↗</a>
+{% endif %}
+{% endfor %}
+</div>
+</section>
+{% elif mode=='blog' %}
+<form id="blog-filter">
+<label>Search articles<input name="q" type="search" placeholder="Title, tag or keyword">
+</label>
+<label>Category<select name="category" class="filter"><option value="">All categories</option>
+{% for c in categories %}
+<option>{{ c }}</option>
+{% endfor %}
+</select>
+</label>
+</form>
+<p id="results" role="status">{{ articles|length }} published articles</p>
+{% for a in articles %}
+<article class="detailbox" data-category="{{ a.category }}" data-article="{{ (a.title ~ ' ' ~ a.tags|join(' ') ~ ' ' ~ a.summary)|lower }}"><small>{{ a.date }} · {{ a.minutes }} min</small>
+<h3><a href="/blog/{{ a.slug }}">{{ a.title }}</a>
+</h3>
+<p>{{ a.summary }}</p>
+</article>
+{% endfor %}
+{% elif article %}
+<p>{{ article.date }} · {{ article.category }} · {{ article.minutes }} min read</p>
+<div class="tags">
+{% for t in article.tags %}
+<b>{{ t }}</b>
+{% endfor %}
+</div>
+<nav aria-label="Table of contents">
+<h2>Contents</h2>
+{% for id,t in article.toc %}
+<div><a href="#{{ id }}">{{ t }}</a>
+</div>
+{% endfor %}
+</nav>
+<article>{{ article.html|safe }}</article><a href="mailto:?subject={{ title|urlencode }}&body={{ canonical|urlencode }}">Share by email</a>
+{% if related %}
+<h2>Related articles</h2>
+{% for a in related %}
+<a href="/blog/{{ a.slug }}">{{ a.title }}</a>
+{% endfor %}
+{% endif %}
+{% elif cert %}
+<p>{{ cert.issuer }} · Issued {{ cert.date }}</p>
+{% if cert.file %}
+{% if cert.file.lower().endswith('.pdf') %}
+<iframe title="{{ cert.name }} certificate" src="{{ cert.file }}"></iframe>
+{% else %}
+<img src="{{ cert.file }}" alt="{{ cert.name }} certificate">
+{% endif %}
+<a href="{{ cert.file }}" download>Download certificate</a>
+{% else %}
+<p>Certificate preview pending.</p>
+{% endif %}
+{% if cert.verify %}
+<a href="{{ cert.verify }}">Verify with issuer ↗</a>
+{% endif %}
+{% elif mode=='resume' %}
+{% if p.resume %}
+<iframe title="Professional résumé" src="{{ p.resume }}"></iframe>
+<div class="choices"><a href="{{ p.resume }}">Open PDF</a><a href="/resume/download" download>Download PDF</a>
+</div>
+{% else %}
+<p>The professional résumé PDF is pending publication.</p><a href="/#about">Read my background →</a>
+{% endif %}
+{% elif mode=='login' %}
+<form id="login">
+<label>Owner password<input type="password" name="password" required maxlength="512" autocomplete="current-password">
+</label><button class="btn primary">Sign in</button>
+<p role="status">
+</p>
+</form>
+<script defer src="/assets/admin.js">
+</script>
+{% elif mode=='dashboard' %}
+<button class="btn" id="logout">Sign out</button>
+<form id="range">
+<label>From<input type="date" name="start" value="{{ start }}" required>
+</label>
+<label>Through<input type="date" name="end" value="{{ end }}" required>
+</label><button class="btn">Apply dates</button>
+</form>
+<div id="report" aria-live="polite">
+</div>
+<script defer src="/assets/admin.js">
+</script>
+{% elif mode=='status' %}
+<p>Application responding · {{ version }}</p>
+<p>Build: {{ build or 'unreported' }}. Last successful deployment: {{ deployed or 'unreported' }}.</p><a href="{{ p.github }}/girl-in-the-cloud/actions">View CI runs ↗</a>
+{% else %}
+<p>This page could not be found.</p>
+{% endif %}
+</div>
+{% endblock %}

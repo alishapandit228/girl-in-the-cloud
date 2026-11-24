@@ -47,6 +47,16 @@ if __name__=="__main__":
             expect(form.get_by_role("status")).to_contain_text("development mailbox")
             with urllib.request.urlopen(os.environ["MAILPIT_URL"]+"/api/v1/messages") as res:
                 assert json.load(res)["total"] >= 1
+        if os.getenv("OWNER_TEST_PASSWORD"):
+            page.goto(base+"/admin")
+            page.get_by_label("Owner password").fill(os.environ["OWNER_TEST_PASSWORD"])
+            page.get_by_role("button",name="Sign in").click()
+            expect(page.get_by_role("heading",name="Visitor analytics")).to_be_visible()
+            expect(page.locator("#report")).to_contain_text("Accepted contact submissions")
+            page.get_by_role("button",name="Apply dates").click()
+            expect(page.locator("#report")).to_contain_text("Project views")
+            page.get_by_role("button",name="Sign out").click()
+            expect(page.get_by_role("heading",name="Owner sign-in")).to_be_visible()
         phone=browser.new_page(viewport={"width":390,"height":844},is_mobile=True,has_touch=True,reduced_motion="reduce")
         phone.goto(base);expect(phone.locator(".boot")).to_be_hidden()
         assert phone.evaluate("document.documentElement.scrollWidth<=innerWidth")

@@ -1,5 +1,52 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ title }} · Girl in the Cloud</title><meta name="description" content="{{ desc }}"><meta property="og:title" content="{{ title }} · Girl in the Cloud"><meta property="og:description" content="{{ desc }}"><meta property="og:type" content="{{ 'article' if article else 'website' }}"><meta name="twitter:card" content="summary_large_image"><meta property="og:image" content="{{ origin }}/art/social.png"><meta property="og:url" content="{{ canonical }}"><link rel="canonical" href="{{ canonical }}"><link rel="icon" href="/art/favicon.svg">{% if private %}<meta name="robots" content="noindex,nofollow">{% endif %}<link rel="stylesheet" href="/assets/site.css"><script src="/assets/theme.js"></script><script defer src="/assets/site.js"></script>{% if enhanced %}<link rel="stylesheet" href="/enhanced/fonts.css"><script type="module" src="/enhanced/scene.js"></script>{% endif %}</head><body><a class="skip" href="#main">Skip to content</a>
-<header class="top"><div class="wrap topin"><a class="brand" href="/"><img src="/art/seal.svg" width="47" height="47" alt=""><span>Girl in the Cloud</span></a><div class="tools"><a class="github" href="{{ p.github }}">GitHub ↗</a><label class="theme"><span aria-hidden="true">☼</span><select id="theme" aria-label="Colour theme"><option value="auto">Auto</option><option value="day">Day</option><option value="night">Night</option></select></label></div></div></header>
-<main id="main">{% block body %}{% endblock %}</main>
-<footer class="wrap"><img src="/art/seal.svg" alt="" width="46" height="46"><span>Alisha Pandit · Girl in the Cloud</span><a href="/status">System status</a></footer>
-<nav class="dock" aria-label="Portfolio sections">{% for key,label,icon in nav %}<a href="/#{{ key }}" aria-label="{{ label }}" title="{{ label }}" data-section="{{ key }}"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="{{ icon }}"/></svg><span>{{ label }}</span></a>{% endfor %}</nav><i class="cursor" aria-hidden="true">☁</i><script type="application/ld+json">{{ structured | tojson }}</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ title }} · Girl in the Cloud</title>
+<meta name="description" content="{{ desc }}">
+<meta property="og:title" content="{{ title }} · Girl in the Cloud">
+<meta property="og:description" content="{{ desc }}">
+<meta property="og:type" content="{{ 'article' if article else 'website' }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="{{ origin }}/art/social.png">
+<meta property="og:url" content="{{ canonical }}">
+<link rel="canonical" href="{{ canonical }}">
+<link rel="icon" href="/art/favicon.svg">
+{% if private %}
+<meta name="robots" content="noindex,nofollow">
+{% endif %}
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/theme.js">
+</script>
+<script defer src="/assets/site.js">
+</script>
+{% if enhanced %}
+<link rel="stylesheet" href="/enhanced/fonts.css">
+<script type="module" src="/enhanced/scene.js">
+</script>
+{% endif %}
+</head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="top">
+<div class="wrap topin"><a class="brand" href="/"><img src="/art/seal.svg" width="47" height="47" alt=""><span>Girl in the Cloud</span></a>
+<div class="tools"><a class="github" href="{{ p.github }}">GitHub ↗</a>
+<label class="theme"><span aria-hidden="true">☼</span><select id="theme" aria-label="Colour theme"><option value="auto">Auto</option><option value="day">Day</option><option value="night">Night</option></select>
+</label>
+</div>
+</div>
+</header>
+<main id="main">
+{% block body %}
+{% endblock %}
+</main>
+<footer class="wrap"><img src="/art/seal.svg" alt="" width="46" height="46"><span>Alisha Pandit · Girl in the Cloud</span><a href="/status">System status</a>
+</footer>
+<nav class="dock" aria-label="Portfolio sections">
+{% for key,label,icon in nav %}
+<a href="/#{{ key }}" aria-label="{{ label }}" title="{{ label }}" data-section="{{ key }}"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="{{ icon }}"/></svg><span>{{ label }}</span></a>
+{% endfor %}
+</nav><i class="cursor" aria-hidden="true">☁</i>
+<script type="application/ld+json">{{ structured | tojson }}</script>
+</body>
+</html>
