@@ -31,6 +31,9 @@ async def lifespan(app):
         if (len(os.getenv("APP_SECRET",""))<32 or not os.getenv("ADMIN_HASH") or not os.getenv("DATABASE_URL")
                 or not os.getenv("PUBLIC_ORIGIN","").startswith("https://")):
             raise RuntimeError("Production requires HTTPS origin, database, owner hash and a strong app secret.")
+    if not (PUBLIC/'art/social.png').exists():
+        from scripts.social import generate
+        generate()
     init()
     yield
 

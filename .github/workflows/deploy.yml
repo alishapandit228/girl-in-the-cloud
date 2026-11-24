@@ -1,0 +1,23 @@
+name: Deploy to configured portfolio host
+on: workflow_dispatch
+permissions: {contents: read}
+jobs:
+  deploy:
+    environment: production
+    runs-on: [self-hosted, portfolio-production]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start the selected revision
+        env:
+          DEPLOY_ENV: ${{ secrets.PORTFOLIO_ENV }}
+        run: |
+          set -eu
+          umask 077
+          test -n "$DEPLOY_ENV"
+          printf '%s\n' "$DEPLOY_ENV" > .env
+          echo "BUILD_ID=$GITHUB_SHA" >> .env
+          docker compose -p girl-in-the-cloud up -d --build --wait
+          curl -fsS http://localhost:8080/api/health
+      - name: Remove runner environment file
+        if: always()
+        run: rm -f .env

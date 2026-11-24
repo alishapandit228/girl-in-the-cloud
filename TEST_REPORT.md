@@ -1,3 +1,4 @@
 Initial repository README and runtime inspected. Local Chromium and FastAPI available. Docker CLI unavailable.
 Content parsed with Python JSON. Original SVGs parsed with ElementTree. Browser interaction checks follow after route integration.
 FastAPI TestClient returned 200 for home, LabQuest, blog, first certificate, admin sign-in, service status, résumé, health and sitemap. Unknown route returned 404.
+Seven unittest groups passed locally (routes, metadata, owner privacy, CSRF, login throttling, contact validation and SMTP mocks, Markdown publishing, GitHub cache/failure). Browser startup was denied by the local runtime (Chromium process singleton socket). Docker and npm registry access are unavailable here. GitHub Actions is configured to build, test Compose and run Chromium/Lighthouse on a hosted runner.

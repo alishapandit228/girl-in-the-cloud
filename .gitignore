@@ -9,3 +9,5 @@ node_modules/
 dist/
 .pytest_cache/
 test-results/
+frontend/public/enhanced/
+frontend/public/art/social.png
