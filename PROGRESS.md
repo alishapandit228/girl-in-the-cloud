@@ -1,6 +1,6 @@
 # Release status
 
-**Application revision:** 9060e1c46687d5c38396f75523038cf047b5cd16 on main. Mobile rendering changes are undergoing three additional Lighthouse measurements.
+**Application revision:** 2edbf52ac663f4aef994cf5c323ae49479f6419f on main. Hosted verification passed, including three mobile Lighthouse measurements.
 
 The public portfolio, optional WebGL scenes, publishing system, FastAPI services, private dashboard and Docker deployment stack are implemented. GitHub Actions built the locked frontend, migrated PostgreSQL, started Nginx and Mailpit, and exercised public and private browser flows. The repository includes real browser previews for desktop, mobile and night mode.
 
@@ -15,4 +15,4 @@ The public portfolio, optional WebGL scenes, publishing system, FastAPI services
 
 **Next release action:** configure the approved assets and production environment described in ASSET_REQUIREMENTS.md and DEPLOYMENT.md, then deploy the tested revision to the selected host. The latest remote SHA is also available in the repository commit history.
 
-[Acceptance matrix](DELIVERY.md) · [Verification report](TEST_REPORT.md) · [Hosted verification](https://github.com/alishapandit228/girl-in-the-cloud/actions/runs/45439958183)
+[Acceptance matrix](DELIVERY.md) · [Verification report](TEST_REPORT.md) · [Hosted verification](https://github.com/alishapandit228/girl-in-the-cloud/actions/runs/45440661689)
