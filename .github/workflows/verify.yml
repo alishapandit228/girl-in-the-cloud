@@ -44,7 +44,9 @@ jobs:
       - run: python tests/browser.py
         env: {BASE_URL: 'http://localhost:8080', MAILPIT_URL: 'http://localhost:8025'}
       - run: |
-          npx --yes lighthouse@12 http://localhost:8080 --quiet --chrome-flags="--headless --no-sandbox" --output=json --output-path=test-results/lighthouse.json
+          for sample in 1 2 3; do
+            npx --yes lighthouse@12 http://localhost:8080 --quiet --chrome-flags="--headless --no-sandbox" --output=json --output-path="test-results/lighthouse-$sample.json"
+          done
       - run: cp frontend/package-lock.json test-results/
       - uses: actions/upload-artifact@v4
         if: always()

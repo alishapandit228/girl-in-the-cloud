@@ -1,8 +1,18 @@
-Foundation initialized. Next milestone: public experience.
+# Release status
 
-Public design and editorial milestone includes the AP seal, original project island artwork, theme switching, navigation dock, workspace, architecture layers, achievement diary and contact booth. Next: route integration and backend.
-FastAPI now serves crawlable public pages, Markdown publishing, API-backed GitHub activity, SMTP contact submission and private analytics. Owner credentials and external integrations remain environment configured. Next: production packaging, enhanced 3D and audit.
-Production build definitions, optional React Three Fiber desk, PostgreSQL migration, Nginx, manual production deployment and test automation are present. Awaiting execution of the hosted production checks.
-Hosted baseline verified at 3270834. Reviewed desktop and mobile screenshots, corrected entrance replay, added real local SMTP coverage and private performance metrics. Final audit follows.
-Added an on-demand orbitable infrastructure island, a dated career timeline and a hosted GitHub integration check. Lockfile and final screenshots will be taken from the hosted build.
-Local setup now generates private random database/session secrets without overwriting an existing .env. Hosted screenshots reviewed in day, night and mobile layouts. Locking the successful frontend dependency resolution and validating owner sign-in on the full PostgreSQL stack.
+**Application revision:** 9060e1c46687d5c38396f75523038cf047b5cd16 on main. Mobile rendering changes are undergoing three additional Lighthouse measurements.
+
+The public portfolio, optional WebGL scenes, publishing system, FastAPI services, private dashboard and Docker deployment stack are implemented. GitHub Actions built the locked frontend, migrated PostgreSQL, started Nginx and Mailpit, and exercised public and private browser flows. The repository includes real browser previews for desktop, mobile and night mode.
+
+| Release step | Status |
+|---|---|
+| Source and infrastructure | Pushed to main, committed tree checked against GitHub |
+| Local development | Python/SQLite startup or Compose, generated local environment, documented in README and DEPLOYMENT |
+| Personal assets | Owner-approved portrait, résumé, certificate scans/verification URLs, event photos, LinkedIn, project demos and screenshots remain configurable |
+| Blog | Editorial draft excluded from public routes until approved for publication |
+| Live delivery | SMTP inbox tested with Mailpit. Production mailbox and credentials required |
+| Public deployment | No public host configured. Requires an existing HTTPS host, production environment and release smoke check |
+
+**Next release action:** configure the approved assets and production environment described in ASSET_REQUIREMENTS.md and DEPLOYMENT.md, then deploy the tested revision to the selected host. The latest remote SHA is also available in the repository commit history.
+
+[Acceptance matrix](DELIVERY.md) · [Verification report](TEST_REPORT.md) · [Hosted verification](https://github.com/alishapandit228/girl-in-the-cloud/actions/runs/45439958183)

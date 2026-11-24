@@ -884,3 +884,17 @@ pre .c,pre .c1 {
   .timeline li:before { animation:pulse 4s ease-in-out infinite alternate; }
   @keyframes pulse { to { box-shadow:0 0 0 4px var(--glow); } }
 }
+/* Defer layout and painting of the long editorial sections until they approach the viewport. */
+main > section.block:not(#projects),
+main > section.tinted,
+main > section.journal {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 540px;
+}
+@media (max-width: 700px) {
+  .dock { backdrop-filter: none; background: var(--sheet); }
+  .heroart { filter: none; animation: none; }
+  .hero .axis-a, .skybits span, .timeline li:before { animation: none; }
+  .entering .hero .atlas { animation: mobile-enter .45s ease-out; }
+  @keyframes mobile-enter { from { opacity: .8; } to { opacity: 1; } }
+}

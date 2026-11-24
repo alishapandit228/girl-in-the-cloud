@@ -40,11 +40,18 @@ function highlight() {
     else link.removeAttribute("aria-current");
   }
 }
-highlight(); addEventListener("scroll",highlight,{passive:true});
+highlight();
+let highlightQueued = false;
+addEventListener("scroll", () => {
+  if (highlightQueued) return;
+  highlightQueued = true;
+  requestAnimationFrame(() => { highlight(); highlightQueued = false; });
+}, {passive:true});
 const cursorMedia = matchMedia("(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)");
+const cursor = $(".cursor");
 document.addEventListener("pointermove",e => {
-  const cursor = $(".cursor");
-  cursor.style.display = cursorMedia.matches ? "block" : "none";
+  if (!cursorMedia.matches) return;
+  cursor.style.display = "block";
   cursor.style.transform = "translate(" + (e.clientX+12) + "px," + (e.clientY+13) + "px)";
 });
 document.documentElement.addEventListener("pointerleave",() => $(".cursor").style.display="none");
