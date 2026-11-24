@@ -1,5 +1,6 @@
-import React, {Component, useState} from "react";
+import React, {useState} from "react";
 import {createRoot} from "react-dom/client";
+import {Fallback} from "./fallback";
 import {Canvas} from "@react-three/fiber";
 import {RoundedBox, OrbitControls} from "@react-three/drei";
 
@@ -30,11 +31,6 @@ function Desk() {
     <group onClick={()=>select("Notebook")}><Block at={[1.7,.05,.68]} size={[.7,.13,.83]} color="#c4b7db"/></group>
     <OrbitControls enableZoom={false} enablePan={false} minPolarAngle={.6} maxPolarAngle={1.3} minAzimuthAngle={-.65} maxAzimuthAngle={.75}/>
   </>;
-}
-class Fallback extends Component<{children:React.ReactNode},{failed:boolean}> {
-  state={failed:false};
-  static getDerivedStateFromError(){return {failed:true};}
-  render(){return this.state.failed?<img src="/art/workspace.svg" alt="Illustrated coding desk"/>:this.props.children;}
 }
 export function mount(host:HTMLElement) {
   createRoot(host).render(<Fallback><Canvas role="img" aria-label="Interactive miniature coding desk. Use the buttons below to explore its objects." frameloop="demand" dpr={[1,1.5]} camera={{position:[3,3.5,5],fov:43}}><Desk/></Canvas></Fallback>);

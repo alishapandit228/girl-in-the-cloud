@@ -1,9 +1,13 @@
 import React from "react";
 import {render,screen} from "@testing-library/react";
-import {expect,it} from "vitest";
-import {readFileSync} from "node:fs";
-it("provides a named island for every configured project",()=>{
-  const {projects}=JSON.parse(readFileSync("../content/portfolio.json","utf8"));
-  render(<nav>{projects.map((p:{slug:string;name:string})=><a key={p.slug} href={"/projects/"+p.slug}>{p.name}</a>)}</nav>);
-  expect(screen.getAllByRole("link")).toHaveLength(4);
+import {expect,it,vi} from "vitest";
+import {Fallback} from "./fallback";
+
+it("keeps the illustrated desk available after a renderer error",()=>{
+  const log=vi.spyOn(console,"error").mockImplementation(()=>{});
+  function BrokenDesk():React.JSX.Element {throw new Error("Renderer unavailable");}
+  try {
+    render(<Fallback><BrokenDesk/></Fallback>);
+    expect(screen.getByRole("img",{name:"Illustrated coding desk"}).getAttribute("src")).toBe("/art/workspace.svg");
+  } finally {log.mockRestore();}
 });

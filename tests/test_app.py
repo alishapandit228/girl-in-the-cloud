@@ -70,10 +70,28 @@ class PortfolioTests(unittest.TestCase):
             self.assertEqual(await gh.read("x"),await gh.read("x"));gh.load.assert_awaited_once()
             gh.until=0;gh.load.side_effect=httpx.ConnectError("offline")
             self.assertIn("cached",(await gh.read("x"))["note"])
-            with self.assertRaises(svc.HTTPException):await svc.GitHubWithTestFailure.read("x")
-        # Independent first-fetch failure exercises the public unavailable path.
-        fail=svc.GitHub();fail.load=AsyncMock(side_effect=httpx.ConnectError("offline"))
-        with patch.object(svc,"GitHubWithTestFailure",fail,create=True):asyncio.run(check())
+            fail=svc.GitHub()
+            fail.load=AsyncMock(side_effect=httpx.ConnectError("offline"))
+            for _ in range(2):
+                with self.assertRaises(svc.HTTPException):await fail.read("x")
+            fail.load.assert_awaited_once()
+        asyncio.run(check())
+    def test_resume_and_certificate_assets(self):
+        # Use temporary public fixtures. Keep sample documents outside tracked personal assets.
+        with tempfile.TemporaryDirectory(dir=main.PUBLIC) as directory:
+            folder=Path(directory)
+            pdf=folder/"resume.pdf"
+            pdf.write_bytes(b"%PDF-1.4 fixture")
+            asset="/assets/"+folder.name+"/resume.pdf"
+            cert={**main.P["certificates"][0],"file":asset,"verify":"https://example.org/verify"}
+            with patch.dict(main.P,{"resume":asset,"certificates":[cert]}):
+                self.assertIn("iframe",self.client.get("/resume").text)
+                download=self.client.get("/resume/download")
+                self.assertEqual(download.content,pdf.read_bytes())
+                self.assertIn("attachment",download.headers["content-disposition"])
+                self.assertIn("Verify with issuer",self.client.get("/certificates/0").text)
+                cert["file"]="/art/hero.svg"
+                self.assertIn('src="/art/hero.svg"',self.client.get("/certificates/0").text)
     def test_assets_and_metadata(self):
         html=self.client.get("/projects/labquest").text
         self.assertIn('rel="canonical"',html);self.assertIn("application/ld+json",html)

@@ -13,9 +13,11 @@ function boot() {
   if (!toast || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   try { if (sessionStorage.getItem("entered")) return; sessionStorage.setItem("entered","yes"); } catch {}
   toast.hidden = false;
-  $("button",toast).onclick = () => toast.hidden = true;
+  document.body.classList.add("entering");
+  function finish() { toast.hidden = true; document.body.classList.remove("entering"); }
+  $("button",toast).onclick = finish;
   ["Connecting to the clouds","Entering my little universe"].forEach((s,i) => setTimeout(() => $("span",toast).textContent = s,550*(i+1)));
-  setTimeout(() => toast.hidden = true,1800);
+  setTimeout(finish,1800);
 }
 boot();
 document.querySelectorAll("[data-picker]").forEach(group => {
@@ -84,3 +86,14 @@ if(search) search.oninput=()=>{
     item.hidden=!(item.dataset.article.includes(query)&&(!cat||item.dataset.category===cat));if(!item.hidden) count++;
   });$("#results").textContent=count+" published "+(count===1?"article":"articles");
 };
+
+const atlas = $(".atlas");
+if (atlas) {
+  atlas.addEventListener("pointermove", event => {
+    if (!cursorMedia.matches) return;
+    const box = atlas.getBoundingClientRect();
+    atlas.style.setProperty("--dx", ((event.clientX-box.left)/box.width-.5)*8+"px");
+    atlas.style.setProperty("--dy", ((event.clientY-box.top)/box.height-.5)*6+"px");
+  });
+  atlas.addEventListener("pointerleave", () => { atlas.style.removeProperty("--dx"); atlas.style.removeProperty("--dy"); });
+}

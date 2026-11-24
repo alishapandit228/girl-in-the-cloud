@@ -2,6 +2,7 @@ name: Verify portfolio
 on:
   push:
     branches: [main]
+    paths-ignore: ['**.md', 'docs/screenshots/**', '!content/blogs/**']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -23,17 +24,25 @@ jobs:
       - run: |
           cp .env.example .env
           echo "POSTGRES_PASSWORD=$(openssl rand -hex 24)" >> .env
-          docker compose up -d --build --wait
+          cat >> .env <<'MAIL'
+          SMTP_HOST=mailpit
+          SMTP_PORT=1025
+          SMTP_SECURITY=local
+          MAIL_FROM=ci@example.test
+          MAIL_TO=owner@example.test
+          MAIL
+          docker compose --profile mail up -d --build --wait
           curl -fsS http://localhost:8080/api/health
       - run: python -m playwright install --with-deps chromium
       - run: python tests/browser.py
-        env: {BASE_URL: 'http://localhost:8080'}
+        env: {BASE_URL: 'http://localhost:8080', MAILPIT_URL: 'http://localhost:8025'}
       - run: |
           npx --yes lighthouse@12 http://localhost:8080 --quiet --chrome-flags="--headless --no-sandbox" --output=json --output-path=test-results/lighthouse.json
+      - run: cp frontend/package-lock.json test-results/
       - uses: actions/upload-artifact@v4
         if: always()
         with: {name: portfolio-audit, path: test-results/}
-      - run: docker compose down
+      - run: docker compose --profile mail down
         if: always()
       - name: Audit dependencies
         run: |

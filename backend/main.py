@@ -2,6 +2,8 @@ import hmac
 import json
 import os
 import secrets
+import re
+from collections import deque
 import time
 from contextlib import asynccontextmanager
 from datetime import date, datetime, timedelta, timezone
@@ -23,12 +25,13 @@ from .db import init, transaction
 PUBLIC=ROOT/"frontend/public"
 templates=Environment(loader=FileSystemLoader(ROOT/"frontend/templates"),autoescape=select_autoescape())
 started=time.monotonic()
+request_times=deque(maxlen=256)
 def prod():return os.getenv("APP_ENV")=="production"
 
 @asynccontextmanager
 async def lifespan(app):
     if prod():
-        if (len(os.getenv("APP_SECRET",""))<32 or not os.getenv("ADMIN_HASH") or not os.getenv("DATABASE_URL")
+        if (len(os.getenv("APP_SECRET",""))<32 or not re.fullmatch(r"[a-f0-9]{32}\.[a-f0-9]{128}",os.getenv("ADMIN_HASH","")) or not os.getenv("DATABASE_URL")
                 or not os.getenv("PUBLIC_ORIGIN","").startswith("https://")):
             raise RuntimeError("Production requires HTTPS origin, database, owner hash and a strong app secret.")
     if not (PUBLIC/'art/social.png').exists():
@@ -44,7 +47,9 @@ if (PUBLIC/"enhanced").is_dir():app.mount("/enhanced",StaticFiles(directory=PUBL
 
 @app.middleware("http")
 async def headers(request,call_next):
+    before=time.perf_counter()
     response=await call_next(request)
+    request_times.append(round((time.perf_counter()-before)*1000,2))
     response.headers.update({
         "Content-Security-Policy":"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'self'; object-src 'none'",
         "X-Content-Type-Options":"nosniff","Referrer-Policy":"strict-origin-when-cross-origin",
@@ -171,7 +176,10 @@ def report(request:Request,start:date,end:date):
             order="1" if "traffic" in label else "2 DESC,1"
             rows=run(f"SELECT {column},COUNT(*)"+scope+f" AND kind='view'{extra} GROUP BY 1 ORDER BY {order} LIMIT 366",**params)
             result[label]=[list(r) for r in rows]
-        result["Application metrics"]=[["Process age (seconds)",int(time.monotonic()-started)]]
+        samples=sorted(request_times)
+        result["Application metrics"]=[["Process age (seconds)",int(time.monotonic()-started)],["Request samples",len(samples)]]
+        if samples:result["Application metrics"].append(["Recent p95 response (ms)",samples[min(len(samples)-1,int(len(samples)*.95))]])
+        result["Contact receipts"]=[[str(datetime.fromtimestamp(row[0],timezone.utc))+" · "+row[1],1] for row in run("SELECT created,state FROM contacts WHERE created>=:a AND created<:b ORDER BY created DESC LIMIT 100",a=epoch(start),b=epoch(end+timedelta(days=1)))]
     return result
 
 @app.get("/robots.txt")

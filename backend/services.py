@@ -115,12 +115,16 @@ class GitHub:
         self.lock=asyncio.Lock()
     async def read(self,username):
         async with self.lock:
-            if self.cache and time.monotonic()<self.until:return self.cache
+            if time.monotonic()<self.until:
+                if self.cache:return self.cache
+                raise HTTPException(503,"GitHub activity is temporarily unavailable.")
             try: data=await asyncio.wait_for(self.load(username),timeout=12)
             except (httpx.HTTPError,TimeoutError,ValueError,KeyError):
                 if self.cache:
                     self.until=time.monotonic()+60
-                    return {**self.cache,"note":"GitHub is unavailable. Showing the last cached snapshot."}
+                    self.cache={**self.cache,"note":"GitHub is unavailable. Showing the last cached snapshot."}
+                    return self.cache
+                self.until=time.monotonic()+60
                 raise HTTPException(503,"GitHub activity is temporarily unavailable.") from None
             self.cache=data;self.until=time.monotonic()+600
             return data

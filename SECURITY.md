@@ -1,0 +1,9 @@
+# Security and privacy
+
+The portfolio has a single owner credential. Generate its scrypt hash with `python -m scripts.admin_password`. Supply a separate, random APP_SECRET. Owner sessions expire after two hours, use opaque random values and are stored as keyed hashes. Production cookies are Secure, HttpOnly and SameSite=Strict. Logout invalidates the server-side session.
+
+The dashboard data endpoint checks the session on every request. Private routes use no-store responses. Mutating endpoints check browser Origin and Fetch Metadata. The API accepts same-origin requests without permissive cross-origin headers. HTML is escaped by default and raw HTML is disabled in Markdown. The proxy limits body size and the application validates field sizes. SMTP uses a fixed sender and recipient, rejects header control characters and uses TLS in production. Database-backed counters limit login and form attempts.
+
+Traffic counters use a daily HMAC of the observed client address. Raw addresses and full user agents are never written to the analytics tables. Counts represent estimated visitor-days. Shared networks can undercount and dynamic addresses can overcount. The referrer retains its domain only. Sec-GPC and Do Not Track disable visitor analytics. Contact receipts persist without sender details, subject or message body. Nginx and Uvicorn access logging is disabled in the container setup.
+
+Activity-triggered cleanup removes stale events and receipts outside the 90-day window. Idle installations can retain expired rows until the next cleanup. Configure backup retention separately. Do not put private keys or unpublished personal documents under frontend/public. Limit deployment credentials and database networking to the host. Use HTTPS and protect production runner access. Rotate APP_SECRET and invalidate sessions after a suspected compromise. Dependency audits run in the verification workflow.
