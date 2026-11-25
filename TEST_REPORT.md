@@ -43,3 +43,5 @@ All verification steps passed in [GitHub Actions run 45440661689](https://github
 | first-contentful-paint (ms) | 1825 | 1830 | 1833 | 1830 |
 | largest-contentful-paint (ms) | 1900 | 1905 | 1908 | 1905 |
 | total-blocking-time (ms) | 0 | 0 | 0 | 0 |
+
+Render launch configuration: parsed the blueprint, verified the single Free instance, checked shell syntax, and exercised startup with stand-in migration/server commands. Verified PostgreSQL driver selection, TLS parameter preservation, platform URL, port, version and rejection of invalid database URLs. Nine backend test groups passed locally. A live Render service and production mailbox have not been verified.

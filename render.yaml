@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: girl-in-the-cloud
+    runtime: docker
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerCommand: sh scripts/start-render.sh
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_HASH
+        sync: false

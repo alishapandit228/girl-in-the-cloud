@@ -52,3 +52,13 @@ docker compose exec -T db pg_restore -U portfolio -d portfolio_restore < portfol
 ```
 
 If health fails, inspect `docker compose logs app db`. An existing database volume retains its original password. Resolve environment mismatches before retrying. If contact reports unavailable, check the configured sender, recipient, TLS mode and SMTP provider. If WebGL is unavailable, the illustrated workspace and all six keyboard controls still work.
+
+## Free Render service with Neon PostgreSQL
+
+1. In [Neon](https://console.neon.tech/), create a Free project. From **Connect**, copy the direct PostgreSQL URL including the TLS parameters. Store this in the hosting dashboard only.
+2. From the repository root run `python -m scripts.admin_password`. Choose the password you will use at /admin. Copy the generated hash.
+3. Open [Deploy to Render](https://render.com/deploy?repo=https://github.com/alishapandit228/girl-in-the-cloud) in a Hobby workspace. Confirm the blueprint lists one Free web service. Set DATABASE_URL to the Neon URL and ADMIN_HASH to the generated hash. Render generates APP_SECRET. On the generated onrender.com domain, the startup script uses Render's HTTPS origin and port automatically.
+4. Once the service is live, open /api/health, then /admin, and verify sign-in. Add GITHUB_TOKEN as a server-side secret for the contribution calendar.
+5. For contact delivery use an SMTP provider supporting STARTTLS on port 2525, such as SMTP2GO Free. Set SMTP_HOST to the provider's assigned hostname, SMTP_PORT=2525, SMTP_SECURITY=starttls, SMTP_USER, SMTP_PASSWORD, MAIL_FROM (verified sender), and MAIL_TO (your inbox). Submit one message and confirm receipt. Without these settings the form reports delivery unavailable.
+
+The Free service sleeps after idle periods and the first visit can take about a minute. Free quotas apply at both providers. Keep the accounts on free plans. The Blueprint provisions no database, disk, worker or paid instance. Forwarded client IP headers are disabled on this deployment: visitors behind the same proxy can share rate limits and a daily visitor estimate. For a custom domain, explicitly set PUBLIC_ORIGIN to its HTTPS URL.

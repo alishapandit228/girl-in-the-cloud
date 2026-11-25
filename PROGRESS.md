@@ -16,3 +16,5 @@ The public portfolio, optional WebGL scenes, publishing system, FastAPI services
 **Next release action:** configure the approved assets and production environment described in ASSET_REQUIREMENTS.md and DEPLOYMENT.md, then deploy the tested revision to the selected host. The latest remote SHA is also available in the repository commit history.
 
 [Acceptance matrix](DELIVERY.md) · [Verification report](TEST_REPORT.md) · [Hosted verification](https://github.com/alishapandit228/girl-in-the-cloud/actions/runs/45440661689)
+
+Render Free deployment blueprint prepared for a user-owned Neon Free database. Public launch requires connecting those accounts and entering DATABASE_URL and ADMIN_HASH. Personal publication assets await owner selection.
