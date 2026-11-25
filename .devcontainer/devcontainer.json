@@ -1,0 +1,21 @@
+{
+  "name": "Girl in the Cloud preview",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    }
+  },
+  "postCreateCommand": "python -m pip install -r backend/requirements.txt && cd frontend && npm ci && npm run build",
+  "postStartCommand": "nohup python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --no-access-log >/tmp/portfolio-preview.log 2>&1 </dev/null &",
+  "forwardPorts": [
+    8000
+  ],
+  "portsAttributes": {
+    "8000": {
+      "label": "Girl in the Cloud",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "waitFor": "postCreateCommand"
+}
