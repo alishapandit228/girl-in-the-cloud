@@ -52,7 +52,7 @@ jobs:
         if: always()
         with: {name: portfolio-audit, path: test-results/}
       - run: docker compose --profile mail down
-        if: always()
+        if: always() && hashFiles('.env') != ''
       - name: Audit dependencies
         run: |
           pip-audit -r backend/requirements.txt

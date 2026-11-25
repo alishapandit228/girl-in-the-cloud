@@ -106,8 +106,8 @@ class PortfolioTests(unittest.TestCase):
             if req.url.path=="/graphql":
                 self.assertEqual(req.headers.get("authorization"),"Bearer test-only")
                 return httpx.Response(200,json={"data":{"user":{"contributionsCollection":{"contributionCalendar":{"totalContributions":2,"weeks":[]}}}}})
-            self.assertNotIn("authorization",req.headers)
-            if req.url.path.endswith("/repos"):data=[{"name":"Public Project","language":"Python","stargazers_count":2,"updated_at":"2026-11-01"}]
+            self.assertEqual(req.headers.get("authorization"),"Bearer test-only")
+            if req.url.path.endswith("/repos"):data=[{"name":"Public Project","private":False,"language":"Python","stargazers_count":2,"updated_at":"2026-11-01"},{"name":"Private Project","private":True}]
             elif req.url.path.endswith("/public"):data=[{"type":"PushEvent","repo":{"name":"owner/public"}}]
             else:data={"public_repos":1,"followers":3}
             return httpx.Response(200,json=data)

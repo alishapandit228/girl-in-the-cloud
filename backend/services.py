@@ -127,6 +127,8 @@ class GitHub:
     async def load(self,username):
         token=os.getenv("GITHUB_TOKEN")
         headers={"Accept":"application/vnd.github+json"}
+        if token:
+            headers["Authorization"] = "Bearer " + token
         async with httpx.AsyncClient(base_url="https://api.github.com",headers=headers,timeout=4) as client:
             # Public REST data stays public even when a token has private repository access.
             async def get(path):
@@ -138,7 +140,7 @@ class GitHub:
                 repositories=[];page=1
                 while True:
                     batch=await get(f"/users/{username}/repos?per_page=100&page={page}")
-                    repositories.extend(batch)
+                    repositories.extend(repo for repo in batch if repo.get("private") is False)
                     if len(batch)<100:break
                     page+=1
                 result["stats"]["Repository stars"]=sum(r["stargazers_count"] for r in repositories)
