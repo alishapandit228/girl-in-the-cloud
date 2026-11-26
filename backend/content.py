@@ -10,6 +10,11 @@ from pygments.util import ClassNotFound
 
 ROOT=Path(__file__).resolve().parents[1]
 P=json.loads((ROOT/"content/portfolio.json").read_text())
+# Use the selected portfolio headshot as soon as its public asset is available.
+portrait_filename = "1000199425.png"
+if not P.get("portrait") and (ROOT / "frontend/public/art" / portrait_filename).is_file():
+    P["portrait"] = f"/art/{portrait_filename}"
+
 NAV=[
 ("home","Home","M3 10l9-7 9 7v10h-6v-6H9v6H3z"),
 ("about","About","M16 7a4 4 0 1 1-8 0 4 4 0 1 1 8 0M4 21v-2a8 8 0 0 1 16 0v2"),
