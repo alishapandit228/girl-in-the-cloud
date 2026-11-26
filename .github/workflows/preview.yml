@@ -1,0 +1,63 @@
+name: Build interactive portfolio preview
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/preview.yml'
+      - 'scripts/export_preview.py'
+      - 'frontend/**'
+      - 'content/**'
+permissions:
+  contents: write
+concurrency: portfolio-preview
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install -r backend/requirements.txt beautifulsoup4 playwright
+      - run: npm ci && npx vite build --base=./
+        working-directory: frontend
+      - run: python -m scripts.export_preview
+      - run: python -m playwright install --with-deps chromium
+      - name: Check the interactive export under a URL prefix
+        run: |
+          python -m http.server 8765 >/tmp/preview-http.log 2>&1 &
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright, expect
+          with sync_playwright() as p:
+              b=p.chromium.launch()
+              page=b.new_page()
+              page.goto("http://localhost:8765/preview-output/index.html")
+              page.select_option("#theme","night")
+              expect(page.locator("html")).to_have_attribute("data-theme","night")
+              page.locator("a.project").first.click()
+              expect(page.get_by_role("heading",name="LabQuest",exact=True)).to_be_visible()
+              page.locator(".dock a").first.click()
+              expect(page.locator("#home")).to_be_visible()
+              b.close()
+          PY
+      - name: Publish reviewed public files to the preview branch
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@users.noreply.github.com
+          if git ls-remote --exit-code --heads origin portfolio-preview >/dev/null; then
+            git fetch origin portfolio-preview
+            git worktree add -b portfolio-preview /tmp/preview-tree FETCH_HEAD
+          else
+            git worktree add --detach /tmp/preview-tree
+            git -C /tmp/preview-tree checkout --orphan portfolio-preview
+          fi
+          git -C /tmp/preview-tree rm -rf --ignore-unmatch .
+          cp -R preview-output/. /tmp/preview-tree/
+          git -C /tmp/preview-tree add .
+          if ! git -C /tmp/preview-tree diff --cached --quiet; then
+            git -C /tmp/preview-tree commit -m "Build interactive preview for $GITHUB_SHA"
+          fi
+          git -C /tmp/preview-tree push origin HEAD:refs/heads/portfolio-preview
