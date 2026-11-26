@@ -24,7 +24,8 @@ class PortfolioTests(unittest.TestCase):
     def test_public_routes(self):
         for path in ["/","/blog","/status","/resume","/admin","/api/health","/robots.txt","/sitemap.xml","/art/social.png"]+[f"/projects/{p['slug']}" for p in main.P["projects"]]+["/certificates/0","/certificates/1"]:
             with self.subTest(path=path):self.assertEqual(self.client.get(path).status_code,200)
-        for path in ["/projects/nonexistent","/blog/linux-permissions","/certificates/-1","/missing","/resume/download"]:self.assertEqual(self.client.get(path).status_code,404)
+        for path in ["/projects/nonexistent","/blog/linux-permissions","/certificates/-1","/missing"]:self.assertEqual(self.client.get(path).status_code,404)
+        self.assertEqual(self.client.get("/resume/download").status_code,200)
     def test_privacy_and_owner(self):
         today=str(date.today());url=f"/api/report?start={today}&end={today}"
         self.assertEqual(self.client.get(url).status_code,401)
