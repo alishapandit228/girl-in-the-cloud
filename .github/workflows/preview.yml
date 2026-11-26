@@ -61,3 +61,8 @@ jobs:
             git -C /tmp/preview-tree commit -m "Build interactive preview for $GITHUB_SHA"
           fi
           git -C /tmp/preview-tree push origin HEAD:refs/heads/portfolio-preview
+      - name: Verify the browser-facing preview URL
+        run: |
+          url="https://raw.githack.com/$GITHUB_REPOSITORY/portfolio-preview/index.html"
+          curl --fail --silent --show-error --location --retry 3 --retry-all-errors --max-time 30 "$url" -o /tmp/published-preview.html
+          grep -q 'ALISHA’S PERSONAL PORTFOLIO' /tmp/published-preview.html
